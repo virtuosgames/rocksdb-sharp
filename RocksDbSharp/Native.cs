@@ -418,7 +418,9 @@ namespace RocksDbSharp
         {
             rocksdb_checkpoint_create(checkpoint, checkpoint_dir, log_size_for_flush, out char_ptr_ptr errptr);
             if (errptr != IntPtr.Zero)
+            {
                 throw new RocksDbException(errptr);
+            }
         }
 
         public abstract void rocksdb_checkpoint_object_destroy(

@@ -1,5 +1,5 @@
-﻿using System;
-using System.Dynamic;
+using System;
+//using System.Dynamic;
 
 namespace RocksDbSharp
 {
@@ -17,7 +17,7 @@ namespace RocksDbSharp
         // and not copied (or reference things that are used in-place).  The idea is to have managed references
         // track the behavior of the unmanaged reference as much as possible.  This prevents access violations
         // when the garbage collector cleans up the last managed reference
-        internal dynamic References { get; } = new ExpandoObject();
+        internal RocksdbReferences References { get; } = new RocksdbReferences();
 
         public IntPtr Handle { get; private set; }
 

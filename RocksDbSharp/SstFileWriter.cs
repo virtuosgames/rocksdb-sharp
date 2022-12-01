@@ -1,6 +1,6 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Dynamic;
+//using System.Dynamic;
 using System.Text;
 using Transitional;
 
@@ -10,7 +10,7 @@ namespace RocksDbSharp
     {
         public IntPtr Handle { get; protected set; }
 
-        internal dynamic References { get; } = new ExpandoObject();
+        internal RocksdbReferences References { get; } = new RocksdbReferences();
 
         public SstFileWriter(EnvOptions envOptions = null, ColumnFamilyOptions ioOptions = null)
         {

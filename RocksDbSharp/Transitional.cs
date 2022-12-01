@@ -147,6 +147,8 @@ namespace System.Runtime.InteropServices
         public static string Linux { get; } = "Linux";
         public static string OSX { get; } = "OSX";
         public static string Windows { get; } = "Windows";
+        //RJZ:
+        //public static string Unix { get; } = "Unix";
     }
 
     public enum Architecture

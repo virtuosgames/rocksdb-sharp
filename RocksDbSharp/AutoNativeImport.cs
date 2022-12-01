@@ -1,4 +1,4 @@
-ï»¿/*
+/*
  License: MIT - see license file at https://github.com/warrenfalk/auto-native-import/blob/master/LICENSE
  Author: Warren Falk <warren@warrenfalk.com>
  */
@@ -66,6 +66,17 @@ namespace NativeImport
             return method.Invoke(null, new object[] { procAddress });
         }
 
+#if LIB9C_DEV_IL2CPP
+        public static T GetDelegate<T>(INativeLibImporter importer, IntPtr lib, string entryPoint) where T : MulticastDelegate
+        {
+            IntPtr procAddress = importer.GetProcAddress(lib, entryPoint);
+            if (procAddress == IntPtr.Zero)
+            {
+                return null;
+            }
+            return CurrentFramework.GetDelegateForFunctionPointer<T>(procAddress);
+        }
+#endif
         private class WindowsImporter : INativeLibImporter
         {
             [DllImport("kernel32.dll", EntryPoint = "LoadLibrary", SetLastError = true)]
@@ -105,7 +116,7 @@ namespace NativeImport
             }
         }
 
-        private class PosixImporter : INativeLibImporter
+        public class PosixImporter : INativeLibImporter
         {
             public string LibraryExtension { get; }
 
@@ -212,6 +223,7 @@ namespace NativeImport
 
         public static T Import<T>(INativeLibImporter importer, string libName, string version, bool suppressUnload) where T : class
         {
+
             var subdir = GetArchName(RuntimeInformation.ProcessArchitecture);
             var runtimeId = GetRuntimeId(RuntimeInformation.ProcessArchitecture);
 
@@ -224,6 +236,7 @@ namespace NativeImport
             FieldBuilder field_importer = typeBuilder.DefineField("importer", typeof(INativeLibImporter), FieldAttributes.Private | FieldAttributes.InitOnly);
             FieldBuilder field_libraryHandle = typeBuilder.DefineField("libraryHandle", typeof(IntPtr), FieldAttributes.Private | FieldAttributes.InitOnly);
 
+            //»ñÈ¡ËùÓÐ (Public || Instance) && Abstruct && (!Generic)
             var methods = typeof(T).GetTypeInfo().GetMethods(BindingFlags.Public | BindingFlags.Instance).Where(m => m.IsAbstract && !m.IsGenericMethod).ToArray();
 
             // Define delegate types for each of the method signatures
@@ -238,7 +251,8 @@ namespace NativeImport
             }
 
             // Define one field for each method to hold a delegate
-            var delegates = methods.Select(m => new {
+            var delegates = methods.Select(m => new
+            {
                 MethodInfo = m,
                 DelegateType = delegateMap[GetMethodSig(m)],
             }).ToArray();
@@ -383,6 +397,8 @@ namespace NativeImport
             {
             }
 
+            //Error: Because we import dll's source code to unity code, paths below maybe are wrong.
+            //So add a temp path to locate dll file.
             var basePaths = new string[] {
                 nativeCodeBase,
                 Path.GetDirectoryName(UriToPath(Transitional.CurrentFramework.GetBaseDirectory())),
