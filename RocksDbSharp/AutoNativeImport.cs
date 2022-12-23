@@ -66,7 +66,6 @@ namespace NativeImport
             return method.Invoke(null, new object[] { procAddress });
         }
 
-#if LIB9C_DEV_IL2CPP
         public static T GetDelegate<T>(INativeLibImporter importer, IntPtr lib, string entryPoint) where T : MulticastDelegate
         {
             IntPtr procAddress = importer.GetProcAddress(lib, entryPoint);
@@ -76,7 +75,7 @@ namespace NativeImport
             }
             return CurrentFramework.GetDelegateForFunctionPointer<T>(procAddress);
         }
-#endif
+
         private class WindowsImporter : INativeLibImporter
         {
             [DllImport("kernel32.dll", EntryPoint = "LoadLibrary", SetLastError = true)]
