@@ -31,7 +31,8 @@ namespace RocksDbSharp
         static Native()
         {
             if (RuntimeInformation.ProcessArchitecture == Architecture.Arm ||
-                RuntimeInformation.ProcessArchitecture == Architecture.Arm64)
+                RuntimeInformation.ProcessArchitecture == Architecture.Arm64 ||
+                (RuntimeInformation.ProcessArchitecture == Architecture.X64 && !RuntimeInformation.IsOSPlatform(OSPlatform.Windows)))
             {
                 return;
             }
